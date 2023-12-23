@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.developers.cryptocurrency"
+    namespace = "com.developers.currency_exchange"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.developers.cryptocurrency"
+        applicationId = "com.developers.currency_exchange"
         minSdk = 24
         targetSdk = 33
         versionCode = 1

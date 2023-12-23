@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Crypto currency"
+rootProject.name = "Currency exchange"
 include(":app")
  

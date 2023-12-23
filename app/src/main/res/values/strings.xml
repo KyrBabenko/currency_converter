@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">Crypto currency</string>
+    <string name="app_name">Currency exchange</string>
+    <string name="currency_converter">"Currency converter"</string>
+
+    <!--  Home screen  -->
+    <string name="submit">"submit"</string>
+    <string name="my_balances">"my balances"</string>
+    <string name="currency_exchange">"currency exchange"</string>
+    <string name="sell">"Sell"</string>
+    <string name="receive">"Receive"</string>
+    <string name="currency_converted_title">"Currency converted"</string>
+    <string name="currency_converted_description">"You have converted %s %s to %s %s.Commission Fee: %s %s"</string>
+    <string name="no_balances_available">"No balances available"</string>
+
+    <string name="done">"Done"</string>
 </resources>
