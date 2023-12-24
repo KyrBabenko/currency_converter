@@ -64,25 +64,15 @@ fun HomeScreen(
             CurrencyExchange(
                 modifier = Modifier
                     .padding(top = 20.dp, start = 20.dp, end = 20.dp),
-                // String
                 cellAmount = "123",
-                // (selectedCurrency: String) -> Unit
                 onChangeCellAmount = {},
-                // List<String>
                 cellCurrencies = listOf("EUR", "USD", "GBP"),
-                // String
                 cellSelectedCurrency = "EUR",
-                // (selectedCurrency: String) -> Unit
                 onChangeCellCurrency = {},
-                // String
                 receiveAmount = "10",
-                // AmountStatus
                 receiveAmountStatus =  AmountStatus.POSITIVE,
-                // List<String>
                 receiveCurrencies = listOf("USD", "EUR", "GBP"),
-                // String
                 selectedReceiveCurrency = "USD",
-                // (selectedCurrency: String) -> Unit
                 onChangeReceiveCurrency = {},
                 onKeyboardAction = {
                     showSuccess(context)
