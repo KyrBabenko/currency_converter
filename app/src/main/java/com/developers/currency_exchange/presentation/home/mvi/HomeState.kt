@@ -10,9 +10,9 @@ data class HomeState(
     val currencyRate: CurrencyRate = CurrencyRate(),
     val sellCurrencies: List<Rate> = emptyList(),
     val receiveCurrencies: List<Rate> = emptyList(),
-    val sellSelectedCurrency: Rate = Rate(),
-    val receiveSelectedCurrency: Rate = Rate(),
-    val sellAmount: String = "0,0",
-    val receiveAmount: String = "0,0",
+    val selectedSellRate: Rate = Rate(),
+    val selectedReceiveRate: Rate = Rate(),
+    val sellAmount: String = "0.0",
+    val receiveAmount: String = "0.0",
     val receiverAmountStatus: AmountStatus = AmountStatus.NEUTRAL,
 )

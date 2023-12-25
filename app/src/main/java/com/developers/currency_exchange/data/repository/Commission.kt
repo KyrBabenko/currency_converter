@@ -40,7 +40,7 @@ class Commission @Inject constructor(
             )
             val freeTransactionsAmount = commissionSetup.getFreeTransactionsAmount()
 
-            if (transactionsCompleted < freeTransactionsAmount) {
+            if (transactionsCompleted <= freeTransactionsAmount) {
                 return COMMISSION_FOR_FREE_TRANSACTIONS.toBigDecimal()
             } else {
                 val commissionPercentage = commissionSetup.getCommissionPercentage()

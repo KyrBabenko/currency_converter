@@ -1,17 +1,19 @@
 package com.developers.currency_exchange.domain.use_case
 
-import java.math.BigDecimal
 import javax.inject.Inject
-import kotlin.math.max
 
 class InputValidatorUseCase @Inject constructor() {
 
-    fun invoke(amount: BigDecimal): Boolean {
-        val decimalsNumber = max(0, amount.stripTrailingZeros().scale())
-        return decimalsNumber <= AVAILABLE_DECIMALS_NUMBER
+    fun invoke(amount: String): Boolean {
+        val dotCount = amount.count { char -> char == DOT_DELIMITER }
+        if (dotCount <= AVAILABLE_DELIMITER_NUMBER) {
+            return true
+        }
+        return false
     }
 
     companion object {
-        private const val AVAILABLE_DECIMALS_NUMBER = 2
+        private const val AVAILABLE_DELIMITER_NUMBER = 1
+        private const val DOT_DELIMITER = '.'
     }
 }

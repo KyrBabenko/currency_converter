@@ -1,12 +1,12 @@
 package com.developers.currency_exchange.domain.use_case
 
-import com.developers.currency_exchange.core.setup.RoundingSetup
 import com.developers.currency_exchange.domain.model.Rate
 import com.developers.currency_exchange.domain.repository.BalanceChanger
 import com.developers.currency_exchange.domain.repository.BalanceVerifier
 import com.developers.currency_exchange.domain.repository.CommissionApplier
 import com.developers.currency_exchange.domain.repository.CommissionCounter
 import com.developers.currency_exchange.presentation.home.model.SuccessExchange
+import com.developers.currency_exchange.util.removeTrailingZeroes
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -16,10 +16,10 @@ class ExchangerUseCase @Inject constructor(
     private val balanceVerifier: BalanceVerifier,
     private val balanceChanger: BalanceChanger,
     private val converterUseCase: ConverterUseCase,
-    private val roundingSetup: RoundingSetup,
 ) {
 
     data class NotEnoughMoneyException(override val message: String? = null) : Exception(message)
+    data class SameItemsException(override val message: String? = null): Exception(message)
 
     /**
      * @throws [NotEnoughMoneyException]
@@ -30,6 +30,10 @@ class ExchangerUseCase @Inject constructor(
         amount: BigDecimal,
         base: String,
     ): SuccessExchange {
+        if (sell.name == receive.name) {
+            throw SameItemsException()
+        }
+
         val commission: BigDecimal = commissionCounter.getCommission(sell.name, amount)
         val sellAmount = amount.add(commission)
         val isTransactionPermit = balanceVerifier.isEnoughBalance(sell.name, sellAmount)
@@ -47,14 +51,14 @@ class ExchangerUseCase @Inject constructor(
                 receive = receive.name,
                 receiveAmount = receiveAmount
             )
-            commissionApplier.transactionCompleted(receive.name)
+            commissionApplier.transactionCompleted(sell.name)
 
             return SuccessExchange(
-                sellAmount = amount.setScale(roundingSetup.getRoundingUiSign()).toString(),
+                sellAmount = amount.toPlainString(),
                 sellCurrency = sell.name,
-                receiveAmount = receiveAmount.setScale(roundingSetup.getRoundingUiSign()).toString(),
+                receiveAmount = receiveAmount.toPlainString().removeTrailingZeroes(),
                 receiveCurrency = receive.name,
-                commissionAmount = commission.setScale(roundingSetup.getRoundingUiSign()).toString(),
+                commissionAmount = commission.toPlainString().removeTrailingZeroes(),
                 commissionCurrency = sell.name,
             )
         } else {

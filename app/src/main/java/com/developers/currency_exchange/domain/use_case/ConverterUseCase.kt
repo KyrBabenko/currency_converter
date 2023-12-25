@@ -40,7 +40,7 @@ class ConverterUseCase @Inject constructor(
     private fun convertFromBase(amount: BigDecimal, rate: Float): BigDecimal {
         return amount
             .multiply(rate.toBigDecimal())
-            .setScale(roundingSetup.getRoundingCountSign())
+            .setScale(roundingSetup.getRoundingCountSign(), roundingSetup.getRoundingMode())
     }
 
     /**

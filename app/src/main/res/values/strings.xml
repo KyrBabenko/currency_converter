@@ -14,9 +14,10 @@
     <string name="exchange_zero_error">Trying exchange zero amount</string>
     <string name="not_enough_money_error">Not enough money for transaction</string>
     <string name="no_currency_rate_updates_error">No currency rates available, reload the app</string>
+    <string name="same_items_error">Same items</string>
 
     <!--  Success dialog  -->
     <string name="currency_converted_title">Currency converted</string>
-    <string name="currency_converted_description">You have converted %s %s to %s %s.Commission Fee: %s %s</string>
+    <string name="currency_converted_description">You have converted %s %s to %s %s. Commission Fee: %s %s</string>
     <string name="currency_converted_button">Done</string>
 </resources>

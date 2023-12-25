@@ -70,10 +70,10 @@ class HomeViewModel @Inject constructor(
                                 currencyRate = currencyRate,
                                 sellCurrencies = rates
                                     .filter {
-                                        it != currentState.sellSelectedCurrency
+                                        it != currentState.selectedSellRate
                                     },
                                 receiveCurrencies = rates
-                                    .filter { it != currentState.receiveSelectedCurrency }
+                                    .filter { it != currentState.selectedReceiveRate }
                             )
                         )
                     }
@@ -111,15 +111,15 @@ class HomeViewModel @Inject constructor(
     override fun exchangeMoney() {
         viewModelScope.launch {
             val localState = _state.value
-            val amount = convertAmount(localState.sellAmount)
+            val amount = formatAmount(localState.sellAmount).toBigDecimal()
 
             if (amount <= BigDecimal.ZERO) {
                 _effects.emit(HomeEffect.ShowError(HomeError.EXCHANGE_ZERO))
                 return@launch
             }
 
-            val sell: Rate = localState.sellSelectedCurrency
-            val receive: Rate = localState.receiveSelectedCurrency
+            val sell: Rate = localState.selectedSellRate
+            val receive: Rate = localState.selectedReceiveRate
 
             try {
                 val successExchange = exchangerUseCase.exchangeMoney(
@@ -131,20 +131,28 @@ class HomeViewModel @Inject constructor(
                 _effects.emit(HomeEffect.ShowSuccessExchange(successExchange))
             } catch (e: ExchangerUseCase.NotEnoughMoneyException) {
                 _effects.emit(HomeEffect.ShowError(HomeError.NOT_ENOUGH_MONEY))
+            } catch (e: ExchangerUseCase.SameItemsException) {
+                _effects.emit(HomeEffect.ShowError(HomeError.SAME_ITEMS))
             }
         }
     }
 
     override fun onChangeSellAmount(sellAmount: String) {
         viewModelScope.launch {
-            val bigDecimalAmount = convertAmount(sellAmount)
-            if (inputValidatorUseCase.invoke(bigDecimalAmount)) {
+            val formattedAmount = formatAmount(sellAmount)
+            if (inputValidatorUseCase.invoke(formattedAmount)) {
+                val bigDecimalAmount = formattedAmount.toBigDecimal()
                 val localState = _state.value
-                val receiverAmount = getReceiverAmount(bigDecimalAmount)
+                val receiverAmount = getConvertedReceiverAmount(
+                    sell = localState.selectedSellRate,
+                    receive = localState.selectedReceiveRate,
+                    sellAmount = bigDecimalAmount,
+                    base = localState.currencyRate.base
+                )
                 val receiverAmountStatus = getAmountStatus(receiverAmount)
                 _state.emit(
                     localState.copy(
-                        sellAmount = sellAmount,
+                        sellAmount = formattedAmount,
                         receiveAmount = receiverAmount.toString(),
                         receiverAmountStatus = receiverAmountStatus
                     )
@@ -156,12 +164,16 @@ class HomeViewModel @Inject constructor(
     override fun onChangeSellCurrency(sell: Rate) {
         viewModelScope.launch {
             val localState = _state.value
-            val bigDecimalAmount = convertAmount(localState.receiveAmount)
-            val receiverAmount = getReceiverAmount(bigDecimalAmount)
+            val receiverAmount = getConvertedReceiverAmount(
+                sell = sell,
+                receive = localState.selectedReceiveRate,
+                sellAmount = localState.sellAmount.toBigDecimal(),
+                base = localState.currencyRate.base
+            )
             val receiverAmountStatus = getAmountStatus(receiverAmount)
             _state.emit(
                 localState.copy(
-                    sellSelectedCurrency = sell,
+                    selectedSellRate = sell,
                     receiveAmount = receiverAmount.toString(),
                     receiverAmountStatus = receiverAmountStatus
                 )
@@ -172,12 +184,16 @@ class HomeViewModel @Inject constructor(
     override fun onChangeReceiveCurrency(receive: Rate) {
         viewModelScope.launch {
             val localState = _state.value
-            val bigDecimalAmount = convertAmount(localState.receiveAmount)
-            val receiverAmount = getReceiverAmount(bigDecimalAmount)
+            val receiverAmount = getConvertedReceiverAmount(
+                sell = localState.selectedSellRate,
+                receive = receive,
+                sellAmount = localState.sellAmount.toBigDecimal(),
+                base = localState.currencyRate.base
+            )
             val receiverAmountStatus = getAmountStatus(receiverAmount)
             _state.emit(
                 localState.copy(
-                    receiveSelectedCurrency = receive,
+                    selectedReceiveRate = receive,
                     receiveAmount = receiverAmount.toString(),
                     receiverAmountStatus = receiverAmountStatus
                 )
@@ -185,11 +201,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getReceiverAmount(sellAmount: BigDecimal): BigDecimal {
-        val localState = _state.value
-        val sell: Rate = localState.sellSelectedCurrency
-        val receive: Rate = localState.receiveSelectedCurrency
-
+    private fun getConvertedReceiverAmount(
+        sell: Rate,
+        receive: Rate,
+        sellAmount: BigDecimal,
+        base: String
+    ): BigDecimal {
         if (sellAmount <= BigDecimal.ZERO) {
             return sellAmount
         }
@@ -197,31 +214,32 @@ class HomeViewModel @Inject constructor(
             sell = sell,
             receive = receive,
             amount = sellAmount,
-            base = localState.currencyRate.base
+            base = base
         )
-            .setScale(roundingSetup.getRoundingUiSign())
+            .setScale(roundingSetup.getRoundingUiSign(), roundingSetup.getRoundingMode())
     }
 
     private fun getAmountStatus(amount: BigDecimal): AmountStatus {
-        return if (amount == BigDecimal.ZERO) {
+        val intAmount = amount.toInt()
+        return if (intAmount == 0) {
             AmountStatus.NEUTRAL
-        } else if (amount > BigDecimal.ZERO) {
+        } else if (intAmount > 0) {
             AmountStatus.POSITIVE
         } else {
             AmountStatus.NEGATIVE
         }
     }
 
-    private fun convertAmount(amount: String): BigDecimal {
-        if (amount.isEmpty()) {
-            return BigDecimal.ZERO
+    private fun formatAmount(amount: String): String {
+        val formattedAmount = amount.filter { char -> char.isDigit() || char == DOT_DELIMITER }
+        if (formattedAmount.isEmpty() || formattedAmount == ".0") {
+            return ZERO
         }
-        val formattedAmount = amount.replace(COMMA_DELIMITER, DOT_DELIMITER)
-        return formattedAmount.toBigDecimal()
+        return formattedAmount
     }
 
     companion object {
+        private const val ZERO = "0"
         private const val DOT_DELIMITER = '.'
-        private const val COMMA_DELIMITER = ','
     }
 }

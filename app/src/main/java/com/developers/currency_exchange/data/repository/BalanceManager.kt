@@ -67,7 +67,7 @@ class BalanceManager @Inject constructor(
             val balance = balances.value.getOrDefault(name, DEFAULT_EMPTY_BALANCE)
             val remainder = balance
                 .minus(amount)
-                .setScale(roundingSetup.getRoundingCountSign())
+                .setScale(roundingSetup.getRoundingCountSign(), roundingSetup.getRoundingMode())
             return remainder >= MIN_AVAILABLE_AMOUNT
         }
     }
