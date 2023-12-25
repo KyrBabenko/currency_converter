@@ -16,8 +16,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.developers.currency_exchange.R
+import com.developers.currency_exchange.presentation.home.mvi.HomeState
 import com.developers.currency_exchange.presentation.model.AmountStatus
-import com.developers.currency_exchange.presentation.model.CurrencyUiItem
 import com.developers.currency_exchange.ui.components.Balances
 import com.developers.currency_exchange.ui.components.CurrencyExchange
 import com.developers.currency_exchange.ui.components.CurrencyExchangeToolbar
@@ -25,7 +25,8 @@ import com.developers.currency_exchange.ui.components.SubmitButton
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    uiState: HomeState,
 ) {
     Column(
         modifier = modifier
@@ -48,18 +49,7 @@ fun HomeScreen(
             Balances(
                 modifier = Modifier
                     .padding(top = 20.dp, start = 20.dp),
-                currencies = listOf(
-                    CurrencyUiItem(1000f, "USD"),
-                    CurrencyUiItem(0f, "EUR"),
-                    CurrencyUiItem(0f, "EUR"),
-                    CurrencyUiItem(0f, "EUR"),
-                    CurrencyUiItem(0f, "EUR"),
-                    CurrencyUiItem(0f, "EUR"),
-                    CurrencyUiItem(0f, "EUR"),
-                    CurrencyUiItem(0f, "EUR"),
-                    CurrencyUiItem(0f, "EUR"),
-                    CurrencyUiItem(0f, "EUR"),
-                )
+                currencies = uiState.balances
             )
             CurrencyExchange(
                 modifier = Modifier

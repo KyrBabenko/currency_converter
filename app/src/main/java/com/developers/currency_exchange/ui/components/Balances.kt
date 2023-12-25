@@ -14,12 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.developers.currency_exchange.R
-import com.developers.currency_exchange.presentation.model.CurrencyUiItem
+import com.developers.currency_exchange.presentation.home.model.BalanceUi
 
 @Composable
 fun Balances(
     modifier: Modifier = Modifier,
-    currencies: List<CurrencyUiItem> = emptyList()
+    currencies: List<BalanceUi> = emptyList()
 ) {
     val scrollState = rememberScrollState()
 
@@ -53,7 +53,7 @@ fun Balances(
                     BalanceItem(
                         modifier = Modifier
                             .padding(end = 20.dp),
-                        value = currencyItem.value,
+                        value = currencyItem.amount,
                         currency = currencyItem.name
                     )
                 }

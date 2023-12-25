@@ -1,6 +1,6 @@
 package com.developers.currency_exchange.data.di
 
-import com.developers.currency_exchange.data.CurrencyApi
+import com.developers.currency_exchange.data.api.CurrencyApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
