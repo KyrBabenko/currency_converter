@@ -30,22 +30,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.developers.currency_exchange.R
+import com.developers.currency_exchange.domain.model.Rate
 import com.developers.currency_exchange.presentation.model.AmountStatus
 import com.developers.currency_exchange.ui.theme.Green80
 
 @Composable
 fun CurrencyExchange(
     modifier: Modifier = Modifier,
-    cellAmount: String,
-    onChangeCellAmount: (selectedCurrency: String) -> Unit,
-    cellCurrencies: List<String>,
-    cellSelectedCurrency: String,
-    onChangeCellCurrency: (selectedCurrency: String) -> Unit,
+    sellAmount: String,
+    onChangeSellAmount: (selectedCurrency: String) -> Unit,
+    sellCurrencies: List<Rate>,
+    sellSelectedCurrency: Rate,
+    onChangeSellCurrency: (selectedCurrency: Rate) -> Unit,
     receiveAmount: String,
     receiveAmountStatus: AmountStatus,
-    receiveCurrencies: List<String>,
-    selectedReceiveCurrency: String,
-    onChangeReceiveCurrency: (selectedCurrency: String) -> Unit,
+    receiveCurrencies: List<Rate>,
+    selectedReceiveCurrency: Rate,
+    onChangeReceiveCurrency: (selectedCurrency: Rate) -> Unit,
     onKeyboardAction: () -> Unit,
 ) {
     Column(
@@ -61,12 +62,12 @@ fun CurrencyExchange(
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(modifier = Modifier.padding(vertical = 10.dp))
-        ExchangeCellItem(
-            amount = cellAmount,
-            onChangeAmount = onChangeCellAmount,
-            currencies = cellCurrencies,
-            selectedCurrency = cellSelectedCurrency,
-            onChangeCurrency = onChangeCellCurrency,
+        ExchangeSellItem(
+            amount = sellAmount,
+            onChangeAmount = onChangeSellAmount,
+            currencies = sellCurrencies,
+            selectedCurrency = sellSelectedCurrency,
+            onChangeCurrency = onChangeSellCurrency,
             onKeyboardAction = onKeyboardAction,
         )
         Spacer(modifier = Modifier.padding(vertical = 5.dp))
@@ -85,13 +86,13 @@ fun CurrencyExchange(
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ExchangeCellItem(
+fun ExchangeSellItem(
     modifier: Modifier = Modifier,
     amount: String,
     onChangeAmount: (amount: String) -> Unit,
-    currencies: List<String>,
-    selectedCurrency: String,
-    onChangeCurrency: (selectedCurrency: String) -> Unit,
+    currencies: List<Rate>,
+    selectedCurrency: Rate,
+    onChangeCurrency: (selectedCurrency: Rate) -> Unit,
     onKeyboardAction: () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -167,9 +168,9 @@ fun ExchangeReceiveItem(
     modifier: Modifier = Modifier,
     amount: String,
     amountStatus: AmountStatus,
-    currencies: List<String>,
-    selectedCurrency: String,
-    onChangeCurrency: (selectedCurrency: String) -> Unit,
+    currencies: List<Rate>,
+    selectedCurrency: Rate,
+    onChangeCurrency: (selectedCurrency: Rate) -> Unit,
 ) {
     val formattedAmount = when (amountStatus) {
         AmountStatus.POSITIVE -> "+$amount"

@@ -54,7 +54,7 @@ class Commission @Inject constructor(
             .multiply(commissionPercentage.toBigDecimal())
             .divide(
                 BigDecimal.valueOf(HUNDRED),
-                roundingSetup.getRoundingSign(),
+                roundingSetup.getRoundingCountSign(),
                 roundingSetup.getRoundingMode()
             )
     }

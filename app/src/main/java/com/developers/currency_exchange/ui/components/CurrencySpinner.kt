@@ -16,14 +16,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.developers.currency_exchange.domain.model.Rate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrencySpinner(
     modifier: Modifier = Modifier,
-    currencies: List<String>,
-    selectedCurrency: String,
-    onChangeCurrency: (selectedCurrency: String) -> Unit
+    currencies: List<Rate>,
+    selectedCurrency: Rate,
+    onChangeCurrency: (selectedCurrency: Rate) -> Unit
 ) {
     var isExpanded by remember {
         mutableStateOf(false)
@@ -39,7 +40,7 @@ fun CurrencySpinner(
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 2.dp),
-                text = selectedCurrency,
+                text = selectedCurrency.name,
                 style = MaterialTheme.typography.bodyLarge
             )
             ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
@@ -55,7 +56,7 @@ fun CurrencySpinner(
                     text = {
                         Text(
                             modifier = Modifier.wrapContentWidth(),
-                            text = currency,
+                            text = currency.name,
                             style = MaterialTheme.typography.bodyLarge,
                             maxLines = 1
                         )

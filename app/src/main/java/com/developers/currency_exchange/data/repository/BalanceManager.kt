@@ -47,15 +47,15 @@ class BalanceManager @Inject constructor(
         receiveAmount: BigDecimal
     ) {
         mutex.withLock {
-            val cellBalance = balances.value.getOrDefault(sell, DEFAULT_EMPTY_BALANCE)
+            val sellBalance = balances.value.getOrDefault(sell, DEFAULT_EMPTY_BALANCE)
             val receiveBalance = balances.value.getOrDefault(receive, DEFAULT_EMPTY_BALANCE)
 
-            val updatedCellBalance = cellBalance.minus(sellAmount)
+            val updatedSellBalance = sellBalance.minus(sellAmount)
             val updatedReceiveBalance = receiveBalance.plus(receiveAmount)
 
             val currentBalances = balances.value
             val updatedBalances = LinkedHashMap(currentBalances).apply {
-                put(sell, updatedCellBalance)
+                put(sell, updatedSellBalance)
                 put(receive, updatedReceiveBalance)
             }
             balances.emit(updatedBalances)
@@ -67,7 +67,7 @@ class BalanceManager @Inject constructor(
             val balance = balances.value.getOrDefault(name, DEFAULT_EMPTY_BALANCE)
             val remainder = balance
                 .minus(amount)
-                .setScale(roundingSetup.getRoundingSign())
+                .setScale(roundingSetup.getRoundingCountSign())
             return remainder >= MIN_AVAILABLE_AMOUNT
         }
     }

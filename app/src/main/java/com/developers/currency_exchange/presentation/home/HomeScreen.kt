@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.developers.currency_exchange.R
+import com.developers.currency_exchange.presentation.home.mvi.HomeIntent
 import com.developers.currency_exchange.presentation.home.mvi.HomeState
 import com.developers.currency_exchange.presentation.model.AmountStatus
 import com.developers.currency_exchange.ui.components.Balances
@@ -27,6 +28,7 @@ import com.developers.currency_exchange.ui.components.SubmitButton
 fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeState,
+    intent: HomeIntent
 ) {
     Column(
         modifier = modifier
@@ -54,16 +56,22 @@ fun HomeScreen(
             CurrencyExchange(
                 modifier = Modifier
                     .padding(top = 20.dp, start = 20.dp, end = 20.dp),
-                cellAmount = "123",
-                onChangeCellAmount = {},
-                cellCurrencies = listOf("EUR", "USD", "GBP"),
-                cellSelectedCurrency = "EUR",
-                onChangeCellCurrency = {},
-                receiveAmount = "10",
-                receiveAmountStatus =  AmountStatus.POSITIVE,
-                receiveCurrencies = listOf("USD", "EUR", "GBP"),
-                selectedReceiveCurrency = "USD",
-                onChangeReceiveCurrency = {},
+                sellAmount = uiState.sellAmount,
+                onChangeSellAmount = {
+                    intent.onChangeSellAmount(it)
+                },
+                sellCurrencies = uiState.sellCurrencies,
+                sellSelectedCurrency = uiState.sellSelectedCurrency,
+                onChangeSellCurrency = {
+                    intent.onChangeSellCurrency(it)
+                },
+                receiveAmount = uiState.receiveAmount,
+                receiveAmountStatus = AmountStatus.POSITIVE,
+                receiveCurrencies = uiState.receiveCurrencies,
+                selectedReceiveCurrency = uiState.receiveSelectedCurrency,
+                onChangeReceiveCurrency = {
+                    intent.onChangeReceiveCurrency(it)
+                },
                 onKeyboardAction = {
                     showSuccess(context)
                 }

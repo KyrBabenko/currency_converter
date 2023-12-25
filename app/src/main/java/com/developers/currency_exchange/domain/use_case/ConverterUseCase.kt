@@ -28,7 +28,7 @@ class ConverterUseCase @Inject constructor(
             convertFromBase(amount, receive.rate)
         } else if (toBase) {
             convertToBase(amount, sell.rate)
-        } else { // cell.name == receive.name
+        } else { // sell.name == receive.name
             amount
         }
     }
@@ -40,7 +40,7 @@ class ConverterUseCase @Inject constructor(
     private fun convertFromBase(amount: BigDecimal, rate: Float): BigDecimal {
         return amount
             .multiply(rate.toBigDecimal())
-            .setScale(roundingSetup.getRoundingSign())
+            .setScale(roundingSetup.getRoundingCountSign())
     }
 
     /**
@@ -51,7 +51,7 @@ class ConverterUseCase @Inject constructor(
         return amount
             .divide(
                 rate.toBigDecimal(),
-                roundingSetup.getRoundingSign(),
+                roundingSetup.getRoundingCountSign(),
                 roundingSetup.getRoundingMode()
             )
     }
@@ -62,10 +62,10 @@ class ConverterUseCase @Inject constructor(
      */
     private fun crossConvert(
         amount: BigDecimal,
-        cellRate: Float,
+        sellRate: Float,
         receiveRate: Float,
     ): BigDecimal {
-        val amountInBase = convertToBase(amount, cellRate)
+        val amountInBase = convertToBase(amount, sellRate)
         return convertFromBase(amountInBase, receiveRate)
     }
 }
