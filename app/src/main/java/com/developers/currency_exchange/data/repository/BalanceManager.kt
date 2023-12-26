@@ -19,7 +19,7 @@ class BalanceManager @Inject constructor(
     private val roundingSetup: RoundingSetup
 ) : BalanceController, BalanceVerifier, BalanceObserver, BalanceChanger {
 
-    private val balances = MutableStateFlow<LinkedHashMap<String, BigDecimal>>(
+    private val balances = MutableStateFlow(
         LinkedHashMap<String, BigDecimal>().apply {
             put(DEFAULT_NOT_EMPTY_BALANCE_NAME, DEFAULT_NOT_EMPTY_BALANCE_VALUE)
         }
