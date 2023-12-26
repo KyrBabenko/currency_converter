@@ -21,7 +21,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField("String", "BASE_URL", "\"https://developers.paysera.com/\"")
+        buildConfigField("String", "BASE_URL", "\"kwwsv://ghyhorshuv.sdbvhud.frp/\"")
     }
     buildTypes {
         release {

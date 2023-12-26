@@ -37,7 +37,7 @@ object RetrofitModule {
             okHttpClientBuilder.addInterceptor(interceptor)
         }
         okHttpClientBuilder.readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
-        okHttpClientBuilder.writeTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+        okHttpClientBuilder.writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
 
         return okHttpClientBuilder.build()
     }
@@ -48,10 +48,28 @@ object RetrofitModule {
         gson: Gson
     ): Retrofit {
         val retrofitBuilder = Retrofit.Builder()
-        retrofitBuilder.baseUrl(BuildConfig.BASE_URL)
+
+        retrofitBuilder.baseUrl(getBaseUrl())
         retrofitBuilder.client(okHttpClient)
         val gsonConverterFactory = GsonConverterFactory.create(gson)
         retrofitBuilder.addConverterFactory(gsonConverterFactory)
         return retrofitBuilder.build()
+    }
+
+    private fun getBaseUrl(): String {
+        val baseURL = BuildConfig.BASE_URL
+        val result = StringBuilder()
+
+        for (char in baseURL) {
+            if (char.isLetter()) {
+                val start = if (char.isUpperCase()) 'A' else 'a'
+                val decodedChar = (start + (char - start - 3 + 26) % 26)
+                result.append(decodedChar)
+            } else {
+                result.append(char)
+            }
+        }
+
+        return result.toString()
     }
 }
